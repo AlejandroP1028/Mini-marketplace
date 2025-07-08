@@ -1,24 +1,27 @@
-"use client"
+"use client";
 
-import { useEffect, useRef } from "react"
-import { motion } from "framer-motion"
-import { staggerChildren } from "@/lib/animations"
-import ListingCard from "./ListingCard"
-import type { Listing } from "@/lib/types"
+import { useEffect, useRef } from "react";
+import { motion } from "framer-motion";
+import { staggerChildren } from "@/lib/animations";
+import ListingCard from "./ListingCard";
+import type { Listing } from "@/lib/types";
 
 interface ListingGridProps {
-  listings: Listing[]
-  title?: string
+  listings: Listing[];
+  title?: string;
 }
 
-export default function ListingGrid({ listings, title = "Today's picks" }: ListingGridProps) {
-  const gridRef = useRef<HTMLDivElement>(null)
+export default function ListingGrid({
+  listings,
+  title = "Today's picks",
+}: ListingGridProps) {
+  const gridRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (gridRef.current) {
-      staggerChildren(gridRef.current, ".listing-card")
+      staggerChildren(gridRef.current, ".listing-card");
     }
-  }, [listings])
+  }, [listings]);
 
   return (
     <div className="flex-1 p-6">
@@ -31,7 +34,10 @@ export default function ListingGrid({ listings, title = "Today's picks" }: Listi
         {title}
       </motion.h2>
 
-      <div ref={gridRef} className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+      <div
+        ref={gridRef}
+        className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4"
+      >
         {listings.map((listing, index) => (
           <div key={listing.id} className="listing-card">
             <ListingCard listing={listing} index={index} />
@@ -50,5 +56,5 @@ export default function ListingGrid({ listings, title = "Today's picks" }: Listi
         </motion.div>
       )}
     </div>
-  )
+  );
 }

@@ -1,21 +1,21 @@
-"use client"
+"use client";
 
-import { useEffect, useRef } from "react"
-import Link from "next/link"
-import { Search, Plus } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { motion } from "framer-motion"
-import { fadeInUp } from "@/lib/animations"
+import { useEffect, useRef } from "react";
+import Link from "next/link";
+import { Search, Plus } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { motion } from "framer-motion";
+import { fadeInUp } from "@/lib/animations";
 
 export default function Header() {
-  const headerRef = useRef<HTMLDivElement>(null)
+  const headerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (headerRef.current) {
-      fadeInUp(headerRef.current)
+      fadeInUp(headerRef.current);
     }
-  }, [])
+  }, []);
 
   return (
     <motion.header
@@ -32,7 +32,9 @@ export default function Header() {
               <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center">
                 <span className="text-white font-bold text-lg">F</span>
               </div>
-              <span className="text-xl font-bold text-gray-900">Marketplace</span>
+              <span className="text-xl font-bold text-gray-900">
+                Marketplace
+              </span>
             </Link>
           </motion.div>
 
@@ -58,5 +60,5 @@ export default function Header() {
         </div>
       </div>
     </motion.header>
-  )
+  );
 }

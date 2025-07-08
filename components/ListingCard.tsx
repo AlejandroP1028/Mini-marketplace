@@ -1,25 +1,25 @@
-"use client"
+"use client";
 
-import { useEffect, useRef } from "react"
-import Image from "next/image"
-import Link from "next/link"
-import { motion } from "framer-motion"
-import { scaleIn } from "@/lib/animations"
-import type { Listing } from "@/lib/types"
+import { useEffect, useRef } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { motion } from "framer-motion";
+import { scaleIn } from "@/lib/animations";
+import type { Listing } from "@/lib/types";
 
 interface ListingCardProps {
-  listing: Listing
-  index?: number
+  listing: Listing;
+  index?: number;
 }
 
 export default function ListingCard({ listing, index = 0 }: ListingCardProps) {
-  const cardRef = useRef<HTMLDivElement>(null)
+  const cardRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (cardRef.current) {
-      scaleIn(cardRef.current, index * 0.1)
+      scaleIn(cardRef.current, index * 0.1);
     }
-  }, [index])
+  }, [index]);
 
   return (
     <motion.div
@@ -39,12 +39,16 @@ export default function ListingCard({ listing, index = 0 }: ListingCardProps) {
             />
           </div>
           <div className="p-3">
-            <h3 className="font-semibold text-gray-900 text-sm mb-1 line-clamp-2">{listing.title}</h3>
-            <p className="text-lg font-bold text-gray-900 mb-1">${listing.price.toFixed(2)}</p>
+            <h3 className="font-semibold text-gray-900 text-sm mb-1 line-clamp-2">
+              {listing.title}
+            </h3>
+            <p className="text-lg font-bold text-gray-900 mb-1">
+              ${listing.price.toFixed(2)}
+            </p>
             <p className="text-xs text-gray-500">{listing.location}</p>
           </div>
         </div>
       </Link>
     </motion.div>
-  )
+  );
 }

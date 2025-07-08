@@ -1,8 +1,8 @@
-"use client"
+"use client";
 
-import { useEffect, useRef } from "react"
-import { motion } from "framer-motion"
-import { slideInLeft } from "@/lib/animations"
+import { useEffect, useRef } from "react";
+import { motion } from "framer-motion";
+import { slideInLeft } from "@/lib/animations";
 
 const categories = [
   "All Categories",
@@ -24,29 +24,29 @@ const categories = [
   "Pet Supplies",
   "Sporting Goods",
   "Toys & Games",
-]
+];
 
 interface CategorySidebarProps {
-  selectedCategory?: string
-  onCategoryChange?: (category: string) => void
+  selectedCategory?: string;
+  onCategoryChange?: (category: string) => void;
 }
 
 export default function CategorySidebar({
   selectedCategory = "All Categories",
   onCategoryChange,
 }: CategorySidebarProps) {
-  const sidebarRef = useRef<HTMLDivElement>(null)
+  const sidebarRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (sidebarRef.current) {
-      slideInLeft(sidebarRef.current, 0.2)
+      slideInLeft(sidebarRef.current, 0.2);
     }
-  }, [])
+  }, []);
 
   return (
     <motion.div
       ref={sidebarRef}
-      className="w-64 bg-white border-r border-gray-200 h-full overflow-y-auto"
+      className="w-64 bg-white border-r border-gray-200 h-screen overflow-y-auto"
       initial={{ x: -100, opacity: 0 }}
       animate={{ x: 0, opacity: 1 }}
       transition={{ duration: 0.6, delay: 0.2 }}
@@ -78,5 +78,5 @@ export default function CategorySidebar({
         </ul>
       </div>
     </motion.div>
-  )
+  );
 }
