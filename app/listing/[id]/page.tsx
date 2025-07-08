@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
@@ -10,22 +10,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { motion } from "framer-motion";
-import { fadeInUp, scaleIn } from "@/lib/animations";
 import { supabase } from "@/lib/supabase";
 import type { Listing } from "@/lib/types";
 
 export default function ListingDetailPage() {
   const { id } = useParams();
-  const imageRef = useRef<HTMLDivElement>(null);
-  const detailsRef = useRef<HTMLDivElement>(null);
-
   const [listing, setListing] = useState<Listing | null>(null);
   const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    if (imageRef.current) scaleIn(imageRef.current, 0.2);
-    if (detailsRef.current) fadeInUp(detailsRef.current, 0.4);
-  }, []);
 
   useEffect(() => {
     const fetchListing = async () => {
@@ -61,12 +52,17 @@ export default function ListingDetailPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 ">
+    <motion.div
+      className="min-h-screen bg-gray-50"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.4 }}
+    >
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
+          transition={{ duration: 0.4 }}
         >
           <Link
             href="/"
@@ -77,28 +73,42 @@ export default function ListingDetailPage() {
           </Link>
         </motion.div>
 
-        <div className="bg-white rounded-lg border border-gray-200 shadow-md overflow-hidden">
-          <div className="grid md:grid-cols-2 gap-0">
+        <motion.div
+          className="bg-white rounded-lg border border-gray-200 shadow-md overflow-hidden"
+          initial={{ opacity: 0, scale: 0.98 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.2, duration: 0.3 }}
+        >
+          <div className="grid md:grid-cols-2">
+            {/* Left: Image */}
             <motion.div
-              ref={imageRef}
               className="aspect-square relative bg-gray-100"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.3 }}
             >
               <Image
                 priority
                 src={listing.image_url || "/placeholder.svg"}
-                alt="Listing"
+                alt={listing.title}
                 fill
                 className="object-cover"
               />
             </motion.div>
 
-            <motion.div ref={detailsRef} className="p-6 md:p-8">
+            {/* Right: Details */}
+            <motion.div
+              className="p-6 md:p-8"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+            >
               <div className="mb-6">
                 <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
                   {listing.title}
                 </h1>
                 <p className="text-3xl font-bold text-gray-900 mb-4">
-                  ${parseFloat(listing.price).toFixed(2)}
+                  ${listing.price.toFixed(2)}
                 </p>
 
                 <div className="flex items-center text-gray-600 mb-2">
@@ -139,9 +149,9 @@ export default function ListingDetailPage() {
 
                 <motion.form
                   className="space-y-4"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.6 }}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.5 }}
                 >
                   <div>
                     <Label htmlFor="email">Your Email</Label>
@@ -177,8 +187,8 @@ export default function ListingDetailPage() {
               </div>
             </motion.div>
           </div>
-        </div>
+        </motion.div>
       </div>
-    </div>
+    </motion.div>
   );
 }
