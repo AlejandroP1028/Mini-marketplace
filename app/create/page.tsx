@@ -16,7 +16,8 @@ import {
 } from "@/components/ui/select";
 import { motion } from "framer-motion";
 import { fadeInUp } from "@/lib/animations";
-
+import { createListing } from "@/lib/createListing";
+import { toast } from "sonner";
 const categories = [
   "Electronics",
   "Vehicles",
@@ -37,10 +38,11 @@ const categories = [
   "Sporting Goods",
   "Toys & Games",
 ];
-
+import { supabase } from "@/lib/supabase";
 export default function CreateListingPage() {
   const formRef = useRef<HTMLDivElement>(null);
-
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -56,6 +58,40 @@ export default function CreateListingPage() {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+
+    let image_url = "";
+
+    try {
+      if (selectedFile) {
+        const fileExt = selectedFile.name.split(".").pop();
+        const fileName = `${Date.now()}.${fileExt}`;
+        const { data, error } = await supabase.storage
+          .from("listing-images")
+          .upload(fileName, selectedFile);
+
+        if (error) throw error;
+
+        const { data: publicUrlData } = supabase.storage
+          .from("listing-images")
+          .getPublicUrl(fileName);
+
+        image_url = publicUrlData?.publicUrl || "";
+      }
+
+      await createListing({ ...formData, image_url });
+      setLoading(false);
+      toast.success("Listing created!");
+    } catch (err) {
+      console.error("Failed to create listing:", err);
+      setLoading(false);
+
+      toast.error("Failed to create listing.");
+    }
+  };
+
   useEffect(() => {
     if (formRef.current) {
       fadeInUp(formRef.current, 0.2);
@@ -64,6 +100,12 @@ export default function CreateListingPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {loading && (
+        <div className="absolute inset-0 z-10 bg-white/70 flex items-center justify-center">
+          <div className="animate-spin rounded-full h-10 w-10 border-4 border-blue-500 border-t-transparent" />
+        </div>
+      )}
+
       <div className=" mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -88,23 +130,25 @@ export default function CreateListingPage() {
               Create New Listing
             </h1>
 
-            <form className="space-y-6">
+            <form className="space-y-6" onSubmit={handleSubmit}>
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 }}
               >
                 <Label htmlFor="image">Photo</Label>
-                <div className="mt-2">
-                  <motion.div
-                    className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer hover:border-blue-500 transition-colors"
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                  >
-                    <Upload className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                    <p className="text-gray-600">Click to upload a photo</p>
-                  </motion.div>
-                </div>
+                <Input
+                  id="image"
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      setImagePreview(URL.createObjectURL(file));
+                      setSelectedFile(file);
+                    }
+                  }}
+                />
               </motion.div>
 
               <motion.div
@@ -269,11 +313,21 @@ export default function CreateListingPage() {
               {/* Preview Image */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-0">
                 <div className="aspect-square relative bg-gray-100 border-r border-gray-200">
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="text-center">
-                      <Upload className="w-16 h-16 text-gray-300 mx-auto mb-2" />
-                      <p className="text-gray-400 text-sm">No image uploaded</p>
-                    </div>
+                  <div className="absolute inset-0 flex flex-col items-center justify-center rounded">
+                    {imagePreview ? (
+                      <img
+                        src={imagePreview}
+                        alt="Preview"
+                        className="object-cover w-full h-full"
+                      />
+                    ) : (
+                      <>
+                        <Upload className="w-12 h-12 text-gray-300 mb-2" />
+                        <p className="text-gray-400 text-sm">
+                          No image uploaded
+                        </p>
+                      </>
+                    )}
                   </div>
                 </div>
 
